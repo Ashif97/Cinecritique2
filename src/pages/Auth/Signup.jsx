@@ -11,7 +11,7 @@ export default function SignUp() {
   const handleSignUp = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/register', {
+      const response = await axios.post('https://moviereview-be.onrender.com/api/auth/register', {
         username,
         email,
         password,
