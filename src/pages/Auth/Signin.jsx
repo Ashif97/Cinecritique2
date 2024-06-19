@@ -17,6 +17,7 @@ export default function SignIn() {
 
       // Assuming the response contains a token
       localStorage.setItem('token', response.data.token);
+      console.log(response.data.token);
 
       // Redirect to home page
       navigate('/home');

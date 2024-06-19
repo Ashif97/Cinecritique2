@@ -1,13 +1,18 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Navbar() {
+  const navigate = useNavigate();
+  const handleLogoutClick = () => {
+    navigate('/logout');
+  };
   return (
     <div className="navbar bg-base-100">
       <div className="flex justify-between w-full">
         {/* Left section: Title, All Movies button, and Search Bar */}
         <div className="flex items-center gap-6">
-          <a className="btn btn-ghost text-xl">CineCritique</a>
-          <button className="btn btn-ghost">All Movies</button>
+          <a onClick={() => navigate('/home')} className="btn btn-ghost text-xl">CineCritique</a>
+          <button onClick={() => navigate('/movies')} className="btn btn-ghost">All Movies</button>
           <div className="form-control">
             <input type="text" placeholder="Search" className="input input-bordered w-full md:w-auto" />
           </div>
@@ -28,13 +33,13 @@ export default function Navbar() {
             </div>
             <ul tabIndex={0} className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52">
               <li>
-                <a className="justify-between">
+                <a onClick={() => navigate('/profile')}className="justify-between">
                   Profile
                   <span className="badge">New</span>
                 </a>
               </li>
-              <li><a>Settings</a></li>
-              <li><a>Logout</a></li>
+              
+              <li><a onClick={handleLogoutClick}>Logout</a></li>
             </ul>
           </div>
         </div>
