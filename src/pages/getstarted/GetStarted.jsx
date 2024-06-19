@@ -44,7 +44,7 @@ export default function GetStarted() {
             <button onClick={() => navigate('/signup')} className="cursor-pointer" className="btn btn-primary" >Get Started</button>
             <br />
             <br />
-            <button onClick={() => navigate('/home')} className= "cursor-pointer" className="btn btn-neutral ">Explore movies</button>
+            {/* <button onClick={() => navigate('/home')} className= "cursor-pointer" className="btn btn-neutral ">Explore movies</button> */}
           </div>
         </div>
       </div>
