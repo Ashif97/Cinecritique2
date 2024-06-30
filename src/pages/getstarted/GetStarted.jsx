@@ -41,7 +41,7 @@ export default function GetStarted() {
             <p className="mb-6 text-2xl font-bold">At Cine Critique, we're passionate about movies and believe in the power of community-driven insights. Whether you're a seasoned cinephile or just getting started, our platform offers everything you need to explore, rate, and discuss your favorite films.</p>
             <p>Join us by clicking get started</p>
             <br />
-            <button onClick={() => navigate('/signup')} className="cursor-pointer" className="btn btn-primary" >Get Started</button>
+            <button onClick={() => navigate('/signup')} className="btn btn-primary cursor-pointer" >Get Started</button>
             <br />
             <br />
             {/* <button onClick={() => navigate('/home')} className= "cursor-pointer" className="btn btn-neutral ">Explore movies</button> */}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { baseurl } from '../../baseurl/baseurl';
 
 export default function SignUp() {
   const [username, setUsername] = useState('');
@@ -11,7 +12,7 @@ export default function SignUp() {
   const handleSignUp = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('https://moviereview-be.onrender.com/api/auth/register', {
+      const response = await axios.post(`${baseurl}/api/auth/register`, {
         username,
         email,
         password,

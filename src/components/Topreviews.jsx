@@ -1,34 +1,42 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
-const reviews = [
-  { user: 'User1', movie: 'Aavesham', comment: 'Funny and mind blowing character by Fahad', rating: 8 },
-  { user: 'User2', movie: 'Turbo', comment: 'didnt deliver the expectation', rating: 5 },
-  { user: 'User3', movie: 'Furiosa', comment: 'must watch action ', rating: 7 },
-  { user: 'User4', movie: 'Laapata Ladies', comment: 'best love story this year', rating: 9.5 },
-  { user: 'User5', movie: 'Immaculate', comment: 'finally a horror movie', rating: 8 },
-//   { user: 'User6', movie: 'Nadanna Sambavam', comment: 'Epic historical drama.', rating: 8.5 },
-];
+const TopReviewsSection = ({ movieId }) => {
+  const [reviews, setReviews] = useState([]);
+  const [error, setError] = useState(null);
 
-const defaultUserImage = 'https://via.placeholder.com/150'; // Placeholder URL for default user image
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const response = await axios.get(`${baseurl}/api/reviews/${movieId}`);
+        const sortedReviews = response.data.sort((a, b) => b.rating - a.rating); // Sort reviews by rating descending
+        setReviews(sortedReviews);
+      } catch (err) {
+        setError(err.response?.data?.message || 'An error occurred while fetching reviews');
+      }
+    };
 
+    fetchReviews();
+  }, [movieId]);
 
-function TopReviewsSection() {
-    return (
-      <div className="space-y-4">
-        <h2 className="text-xl font-bold mb-4">Top Reviews</h2>
-        {reviews.map((review, index) => (
-          <div key={index} className="flex space-x-4 items-center">
-            <img src={defaultUserImage} className="w-12 h-12 rounded-full" alt="User" />
-            <div>
-              <p className="font-semibold">{review.user}</p>
-              <p className="text-gray-500">{review.movie}</p>
-              <p>{review.comment}</p>
-              <p className="text-yellow-400">{review.rating}/10</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    );
+  if (error) {
+    return <div className="text-center py-8 text-red-500">Error: {error}</div>;
   }
-  
-  export default TopReviewsSection;
+
+  return (
+    <div className="space-y-4">
+      <h2 className="text-xl font-bold mb-6">Top Reviews</h2>
+      {reviews.slice(0, 3).map((review) => (
+        <div key={review._id} className="flex space-x-4 items-center border-b pb-4">
+          <div className="flex-1">
+            <p className="font-semibold">{review.user.username}</p>
+            <p className="text-gray-500">Review: "{review.reviewText}"</p>
+            <p className="text-yellow-400">Rating: {review.rating}/10</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default TopReviewsSection;
