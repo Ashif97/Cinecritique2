@@ -10,7 +10,7 @@ const Reviews = ({ movieId }) => {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/reviews/${movieId}`);
+        const response = await axios.get(`https://moviereview-be.onrender.com/api/reviews/${movieId}`);
         
         const { reviews, averageRating } = response.data;
         setReviews(reviews);
