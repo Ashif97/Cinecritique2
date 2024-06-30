@@ -11,7 +11,7 @@ function Carousel() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const moviesResponse = await axios.get('http://localhost:5000/api/movies');
+        const moviesResponse = await axios.get('https://moviereview-be.onrender.com/api/movies');
         setMovies(moviesResponse.data.slice(0, 5));
         setImages(moviesResponse.data.map(movie => movie.image).slice(0, 5));
         if (moviesResponse.data.length > 0) {
