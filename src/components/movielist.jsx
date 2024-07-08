@@ -15,15 +15,18 @@ const MovieList = ({ isAdmin }) => {
 
   const ratingCategories = [
     { label: 'All Ratings', value: '' },
-    { label: 'High Rated (8-10)', value: '8-10' },
-    { label: 'Average Rated (5-7.9)', value: '5-7.9' },
-    { label: 'Low Rated (1-4.9)', value: '1-4.9' },
-    { label: 'Unrated', value: '0' }
+    { label: 'High Rated  ', value: '8-10' },
+    { label: 'Average Rated ', value: '5-7.9' },
+    { label: 'Low Rated ', value: '1-4.9' },
+    // { label: 'Unrated', value: '0' } // Adjusted 'Unrated' value to '0' to match backend logic
   ];
 
   useEffect(() => {
-    axios.get(`${baseurl}/api/search`)
-      .then(response => setGenres(response.data))
+    axios.get(`${baseurl}/api/movies`)
+      .then(response => {
+        const uniqueGenres = [...new Set(response.data.flatMap(movie => movie.genres))];
+        setGenres(uniqueGenres);
+      })
       .catch(error => console.error('Error fetching genres:', error));
   }, []);
 
@@ -34,15 +37,11 @@ const MovieList = ({ isAdmin }) => {
     if (searchQuery) params.append('query', searchQuery);
     if (selectedGenre) params.append('genres', selectedGenre);
     if (selectedRatingCategory) {
-      if (selectedRatingCategory === 'unrated') {
-        params.append('rating', 'unrated');
-      } else {
-        params.append('rating', selectedRatingCategory);
-      }
+      params.append('averagerating', selectedRatingCategory);
     }
 
     try {
-      const response = await axios.get(`${baseurl}/api/movies?${params.toString()}`);
+      const response = await axios.get(`${baseurl}/api/movies/search?${params.toString()}`);
       const moviesData = response.data;
 
       const moviesWithRatings = await Promise.all(
@@ -52,7 +51,24 @@ const MovieList = ({ isAdmin }) => {
         })
       );
 
-      setMovies(moviesWithRatings);
+      // Filter movies based on selectedRatingCategory
+      let filteredMovies = moviesWithRatings;
+      if (selectedRatingCategory) {
+        if (selectedRatingCategory === '0') {
+          // Handle unrated movies
+          filteredMovies = moviesWithRatings.filter(movie => movie.averageRating === undefined);
+        } else {
+          const [min, max] = selectedRatingCategory.split('-').map(Number);
+          filteredMovies = moviesWithRatings.filter(movie => {
+            if (movie.averageRating) {
+              return movie.averageRating >= min && movie.averageRating <= max;
+            }
+            return false;
+          });
+        }
+      }
+
+      setMovies(filteredMovies);
     } catch (error) {
       setError(error.message);
     } finally {
@@ -66,18 +82,19 @@ const MovieList = ({ isAdmin }) => {
 
   const handleGenreChange = event => {
     setSelectedGenre(event.target.value);
-    fetchMovies();
   };
 
   const handleRatingCategoryChange = event => {
     setSelectedRatingCategory(event.target.value);
-    fetchMovies();
   };
 
   const handleSearchChange = event => {
     setSearchQuery(event.target.value);
-    fetchMovies();
   };
+
+  useEffect(() => {
+    fetchMovies();
+  }, [selectedGenre, selectedRatingCategory, searchQuery, fetchMovies]);
 
   const handleDelete = useCallback(async (movieId) => {
     if (window.confirm('Are you sure you want to delete this movie?')) {

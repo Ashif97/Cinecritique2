@@ -1,42 +1,48 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const TopReviewsSection = ({ movieId }) => {
+const TopReviews = () => {
   const [reviews, setReviews] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchReviews = async () => {
+    const fetchLatestReviews = async () => {
       try {
-        const response = await axios.get(`${baseurl}/api/reviews/${movieId}`);
-        const sortedReviews = response.data.sort((a, b) => b.rating - a.rating); // Sort reviews by rating descending
-        setReviews(sortedReviews);
-      } catch (err) {
-        setError(err.response?.data?.message || 'An error occurred while fetching reviews');
+        const response = await axios.get('/api/reviews/latest');
+        if (Array.isArray(response.data)) {
+          setReviews(response.data);
+        } else {
+          console.error('Unexpected response format:', response.data);
+          setError('Unexpected response format');
+        }
+      } catch (error) {
+        console.error('Error fetching the latest reviews:', error);
+        setError('Error fetching the latest reviews');
       }
     };
 
-    fetchReviews();
-  }, [movieId]);
+    fetchLatestReviews();
+  }, []);
 
   if (error) {
-    return <div className="text-center py-8 text-red-500">Error: {error}</div>;
+    return <div>Error: {error}</div>;
   }
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-bold mb-6">Top Reviews</h2>
-      {reviews.slice(0, 3).map((review) => (
-        <div key={review._id} className="flex space-x-4 items-center border-b pb-4">
-          <div className="flex-1">
-            <p className="font-semibold">{review.user.username}</p>
-            <p className="text-gray-500">Review: "{review.reviewText}"</p>
-            <p className="text-yellow-400">Rating: {review.rating}/10</p>
-          </div>
-        </div>
-      ))}
+    <div>
+      <h2>Latest Reviews</h2>
+      <ul>
+        {reviews.map((review) => (
+          <li key={review._id}>
+            <h3>{review.movie.title}</h3>
+            <p><strong>Reviewed by:</strong> {review.user.username}</p>
+            <p><strong>Rating:</strong> {review.rating}</p>
+            <p>{review.reviewText}</p>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
 
-export default TopReviewsSection;
+export default TopReviews;

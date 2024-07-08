@@ -21,7 +21,7 @@ export default function SignUp() {
       console.log(response.data.message); // Log success message
 
       // Redirect to home page or any other route on successful signup
-      navigate('/home');
+      navigate('/signin');
     } catch (error) {
       console.error('Error signing up', error);
       // Handle error (e.g., show error message to user)
